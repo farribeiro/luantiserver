@@ -1,5 +1,5 @@
 # Build stage
-FROM debian:bookworm-slim AS builder
+FROM debian:trixie-slim AS builder
 
 # Build-time arguments - defaults to dev build of more recent version
 ARG LUANTI_VERSION=master
@@ -74,7 +74,7 @@ RUN cmake -G Ninja /usr/src/luanti \
     ninja install
 
 # Bundle only the runtime dependencies
-FROM debian:bookworm-slim AS runtime
+FROM debian:trixie-slim AS runtime
 RUN apt-get update &&\
     apt-get install libcurl3-gnutls libgcc-s1 libgmp10 libjsoncpp25 \
         libleveldb1d libncursesw6 libpq5 \
