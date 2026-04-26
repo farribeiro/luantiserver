@@ -27,7 +27,7 @@ jobs:
               MINETEST_GAME_VERSION=master
               LUAJIT_VERSION=v2.1
             tags: |-
-              5.13.0-dev
+              5.16.0-dev
               unstable
               dev
             platforms: |-
@@ -35,9 +35,9 @@ jobs:
               linux/arm64
           - dockerfile: Dockerfile
             args: |-
-              LUANTI_VERSION=5.12.0
-              MINETEST_GAME_VERSION=844216cbb8a8647999ed3cb858e1f0fddafea01f
-              LUAJIT_VERSION=f9140a622a0c44a99efb391cc1c2358bc8098ab7
+              LUANTI_VERSION=5.15.2
+              MINETEST_GAME_VERSION=95991f8dc4c97d3cc7945269bf2d5640c7fe6bc8
+              LUAJIT_VERSION=18b087cd2cd4ddc4a79782bf155383a689d5093d
             tags: |-
               stable
               stable-5

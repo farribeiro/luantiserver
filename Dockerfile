@@ -22,13 +22,12 @@ RUN apt-get update &&\
 
 # Fetch source
 RUN mkdir -p /usr/src &&\
-    git clone -b ${LUANTI_VERSION} \
-        https://github.com/minetest/minetest \
-        /usr/src/minetest &&\
-    rm -rf /usr/src/minetest/.git
-RUN git clone https://github.com/minetest/minetest_game \
-        /usr/src/minetest/games/minetest_game &&\
-    git -C /usr/src/minetest/games/minetest_game checkout ${MINETEST_GAME_VERSION}
+    git clone https://github.com/luanti-org/luanti \
+        /usr/src/luanti &&\
+    git -C /usr/src/luanti checkout ${LUANTI_VERSION}
+RUN git clone https://github.com/luanti-org/minetest_game \
+        /usr/src/luanti/games/minetest_game &&\
+    git -C /usr/src/luanti/games/minetest_game checkout ${MINETEST_GAME_VERSION}
 RUN git clone \
         https://github.com/LuaJIT/LuaJIT \
         /usr/src/luajit &&\
@@ -36,7 +35,7 @@ RUN git clone \
 
 # Apply patches
 ADD patches /usr/src/patches
-RUN cd /usr/src/minetest ;\
+RUN cd /usr/src/luanti ;\
     ls -1 /usr/src/patches/${LUANTI_VERSION}-*.patch | while read file ; do \
         patch -p1 < $file ; \
     done
@@ -62,7 +61,7 @@ RUN make PREFIX=/usr &&\
 
 # Build server
 WORKDIR /tmp/build
-RUN cmake -G Ninja /usr/src/minetest \
+RUN cmake -G Ninja /usr/src/luanti \
         -DENABLE_POSTGRESQL=TRUE \
         -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql \
         -DCMAKE_INSTALL_PREFIX=/usr \
@@ -90,13 +89,13 @@ RUN adduser --system --uid 30000 --group --home /var/lib/luanti luanti &&\
 # Copy files and folders
 COPY --from=builder /usr/share/doc/luanti/minetest.conf.example /etc/luanti/luanti.conf
 COPY --from=builder /usr/share/luanti       /usr/share/luanti
-COPY --from=builder /usr/src/minetest/games /usr/share/luanti/games
+COPY --from=builder /usr/src/luanti/games   /usr/share/luanti/games
 COPY --from=builder /usr/bin/luantiserver   /usr/bin
 COPY --from=builder /usr/bin/contentdb      /usr/bin
 COPY --from=builder /opt/luajit/usr/        /usr/
 ADD luanti-wrapper.sh /usr/bin
 
-# Add symlinks (minetest -> luanti) to easy the upgrade after upstream rename
+# Add symlinks (luanti -> luanti) to easy the upgrade after upstream rename
 RUN ln -s /usr/share/luanti /usr/share/minetest &&\
     ln -s /etc/luanti /etc/minetest &&\
     ln -s /etc/luanti/luanti.conf /etc/luanti/minetest.conf &&\
@@ -105,4 +104,4 @@ RUN ln -s /usr/share/luanti /usr/share/minetest &&\
 WORKDIR /var/lib/luanti
 USER luanti 
 EXPOSE 30000/udp 30000/tcp
-CMD ["/usr/bin/luanti-wrapper.sh", "--config", "/etc/luanti/luanti.conf", "--gameid", "minetest"]
+CMD ["/usr/bin/luanti-wrapper.sh", "--config", "/etc/luanti/luanti.conf", "--gameid", "luanti"]
