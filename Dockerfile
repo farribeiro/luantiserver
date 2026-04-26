@@ -76,9 +76,9 @@ RUN cmake -G Ninja /usr/src/luanti \
 # Bundle only the runtime dependencies
 FROM debian:trixie-slim AS runtime
 RUN apt-get update &&\
-    apt-get install libcurl3-gnutls libgcc-s1 libgmp10 libjsoncpp25 \
+    apt-get install libcurl3-gnutls libgcc-s1 libgmp10 libjsoncpp26 \
         libleveldb1d libncursesw6 libpq5 \
-        libspatialindex6 libsqlite3-0 libstdc++6 libtinfo6 zlib1g libzstd1 \
+        libspatialindex8 libsqlite3-0 libstdc++6 libtinfo6 zlib1g libzstd1 \
         adduser git -yq &&\
     apt-get clean
 # Creates a user to run the server as, with a home dir that can be mounted
@@ -104,4 +104,4 @@ RUN ln -s /usr/share/luanti /usr/share/minetest &&\
 WORKDIR /var/lib/luanti
 USER luanti 
 EXPOSE 30000/udp 30000/tcp
-CMD ["/usr/bin/luanti-wrapper.sh", "--config", "/etc/luanti/luanti.conf", "--gameid", "luanti"]
+CMD ["/usr/bin/luanti-wrapper.sh", "--config", "/etc/luanti/luanti.conf", "--gameid", "minetest_game"]
